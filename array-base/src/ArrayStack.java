@@ -1,6 +1,5 @@
 import java.util.AbstractList;
-import java.util.Collection;
-import java.lang.reflect.Array;
+
 
 public class ArrayStack < T > extends AbstractList < T > {
     Factory < T > f; // keeps track of the class of objects we store
