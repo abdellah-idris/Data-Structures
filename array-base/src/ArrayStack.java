@@ -55,17 +55,28 @@ public class ArrayStack < T > extends AbstractList < T > {
         return x;
     }
 
+
+
+
+    // Pops the top element from the stack
+    public T remove() {
+        T x = a[--n]; // Decreasing the count and then removing from the top
+        if (a.length >= 3 * n) resize();
+        return x;
+    }
+
+    // Remove last element from the array
     public static void main(String args[]) {
 
         ArrayStack < Integer > stack = new ArrayStack < > (Integer.class);
-        // Adds the elements to the stack
-        stack.add(0, 1);
-        stack.add(1, 2);
-        stack.add(2, 3);
+        // Adds the elements at the end of the array
+        stack.add(1);
+        stack.add(2);
+        stack.add(3);
 
         System.out.println("Stack size: " + stack.size());
 
-        int removedElement = stack.remove(1);
+        int removedElement = stack.remove(); // Remove last element
         System.out.println("Removed element: " + removedElement);
 
         System.out.println("Stack elements:");
