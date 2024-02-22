@@ -82,26 +82,46 @@ public class ArrayStack < T > extends AbstractList < T > {
 
     // Remove last element from the array
     public static void main(String args[]) {
+
+        System.out.println("Stack Operations");
+
+        ArrayStack < Integer > stack = new ArrayStack < > (Integer.class);
+        // Adds the elements to the stack
+        stack.add(0, 1);
+        stack.add(1, 2);
+        stack.add(2, 3);
+
+        System.out.println("Stack size: " + stack.size());
+
+        int removedElement = stack.remove(1);
+        System.out.println("Removed element: " + removedElement);
+
+        System.out.println("Stack elements:");
+        for (int i = 0; i < stack.size(); i++) {
+            System.out.println(stack.get(i));
+        }
+
+
+        System.out.println("Stack Optimisation");
+
         // Creating an ArrayStack of Integers
-        ArrayStack<Integer> stack = new ArrayStack<>(Integer.class);
+        ArrayStack<Integer> stackOptimisation = new ArrayStack<>(Integer.class);
 
         // Adding a large number of elements to the stack
         int numElements = 1000000; // Add 1 million elements
         for (int i = 0; i < numElements; i++) {
-            stack.add(i);
+            stackOptimisation.add(i);
         }
 
         // Measuring time taken by resize()
         long startTimeResize = System.nanoTime();
-        stack.resize();
-        long endTimeResize = System.nanoTime();
-        long durationResize = (endTimeResize - startTimeResize);
+        stackOptimisation.resize();
+        long durationResize = (System.nanoTime() - startTimeResize);
 
         // Measuring time taken by resizeOptimized()
         long startTimeResizeOptimized = System.nanoTime();
-        stack.resizeOptimized();
-        long endTimeResizeOptimized = System.nanoTime();
-        long durationResizeOptimized = (endTimeResizeOptimized - startTimeResizeOptimized);
+        stackOptimisation.resizeOptimized();
+        long durationResizeOptimized = (System.nanoTime() - startTimeResizeOptimized);
 
         // Printing the durations
         System.out.println("Time taken by resize(): " + durationResize + " nanoseconds");

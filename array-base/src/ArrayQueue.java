@@ -3,8 +3,25 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.Queue;
 
-// An implementation of the Queue<T> interface using an array
-// All operations takes constant amortized time.
+// An implementation of the Queue<T> interface using an array (circular array)
+/*
+* The primary challenge in implementing a queue with an array arises from the fact that arrays have a fixed size.
+* Unlike stacks, where elements are added and removed from the same end, queues require elements to be added at one end
+* and removed from the other.
+*  This means that if we use a regular array, adding or removing elements at one end would require shifting all other
+* elements, resulting in a time complexity proportional to the number of elements in the array.*/
+
+/*
+* To overcome this challenge, the concept of modular arithmetic is introduced. Modular arithmetic involves performing
+* arithmetic operations on integers, but only considering the remainder when dividing by a given modulus. In the context
+* of ArrayQueue:
+* The array is treated as if it were circular, with indices "wrapping around" when they exceed the array's length.
+-   When adding an element, we calculate the index where it should be placed using modular arithmetic: (j + n) % a.length.
+
+-   Similarly, when removing an element, we calculate the index from which it should be removed using modular arithmetic: j % a.length.
+This approach allows us to efficiently add and remove elements from the ArrayQueue without needing to shift all elements in the array.
+Overall, by leveraging modular arithmetic, we can simulate the behavior of an infinite array while using a finite array, enabling an efficient implementation of a queue data structure.
+*/
 
 public class ArrayQueue < T > extends AbstractQueue < T > {
 
@@ -21,6 +38,16 @@ public class ArrayQueue < T > extends AbstractQueue < T > {
         a = b;
         j = 0;
     }
+
+    protected void resizeOptimized() {
+        int newSize = Math.max(1, n * 2); // New size of the array
+        T[] newArray = f.newArray(newSize); // Create a new array with the new size
+        System.arraycopy(a, j, newArray, 0, Math.min(n, a.length - j)); // Copy elements from j to the end of the array
+        System.arraycopy(a, 0, newArray, Math.min(n, a.length - j), Math.max(0, n - (a.length - j))); // Copy remaining elements from the beginning of the array
+        a = newArray; // Update the reference to the new array
+        j = 0; // Reset the index
+    }
+
 
     public ArrayQueue(Class < T > t) { // Constructor
         f = new Factory < T > (t);
@@ -105,9 +132,32 @@ public class ArrayQueue < T > extends AbstractQueue < T > {
             }
         }
         System.out.println("After addition the queue contents are:");
-        Iterator < Integer > i = q.iterator();
-        while (i.hasNext()) {
-            System.out.print(i.next() + " ");
+        Iterator < Integer > it = q.iterator();
+        while (it.hasNext()) {
+            System.out.print(it.next() + " ");
         }
+
+
+        System.out.println("\n Compare resize functions");
+        int numElements = 1_000_000_0; // Number of elements to add to the queue
+        // Create an ArrayQueue with the original resize function
+        ArrayQueue<Integer> queue = new ArrayQueue<>(Integer.class);
+        for (int i = 0; i < numElements; i++) {
+            queue.add(i); // Add elements to the queue
+        }
+
+        // Measuring time taken by resize()
+        long startTimeResize = System.nanoTime();
+        queue.resize();
+        long durationResize = (System.nanoTime() - startTimeResize);
+
+        // Measuring time taken by resizeOptimized()
+        long startTimeResizeOptimized = System.nanoTime();
+        queue.resizeOptimized();
+        long durationResizeOptimized = (System.nanoTime() - startTimeResizeOptimized);
+
+        // Printing the durations
+        System.out.println("Time taken by resize(): " + durationResize + " nanoseconds");
+        System.out.println("Time taken by resizeOptimized(): " + durationResizeOptimized + " nanoseconds");
     }
 }
